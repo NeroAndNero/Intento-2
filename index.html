@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BIBLIOTECA — Colección de Personajes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ============ VARIABLES ============ */
+:root{
+  --crema:#f5f1ea; --crema-2:#ece6da; --tinta:#111; --acento:#b81414; /* cambia a #c9a227 para dorado */
+  --serif:'Playfair Display','Cormorant Garamond',Georgia,serif;
+  --sans:'Inter','Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--crema);color:var(--tinta);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+
+/* ============ MASTHEAD ============ */
+.topbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0 10px;
+  font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;border-bottom:1px solid var(--tinta)}
+.topbar b{color:var(--acento);font-weight:600}
+.masthead{text-align:center;padding:clamp(18px,4vw,40px) 0 0}
+.masthead h1{font-family:var(--serif);font-weight:900;text-transform:uppercase;line-height:.9;
+  font-size:clamp(3rem,15.5vw,12.5rem);letter-spacing:-.02em}
+.rule{border:0;border-top:6px solid var(--tinta);margin:clamp(10px,2vw,20px) 0 3px}
+.rule.thin{border-top-width:1px;margin:0}
+.subtitulo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 0;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase}
+.subtitulo em{font-family:var(--serif);font-size:1.05rem;letter-spacing:.04em;text-transform:none;color:var(--acento)}
+
+/* ============ BUSCADOR Y FILTROS ============ */
+.archivo{padding:clamp(24px,5vw,48px) 0 10px;text-align:center}
+.archivo label{display:block;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--acento);margin-bottom:6px}
+#buscador{width:100%;max-width:620px;background:none;border:0;border-bottom:1px solid var(--tinta);border-radius:0;outline:0;
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,3.5vw,1.8rem);text-align:center;padding:6px 0;color:var(--tinta)}
+#buscador::placeholder{color:#8a8478;opacity:1}
+#buscador:focus{border-bottom-color:var(--acento)}
+.filtros{margin-top:26px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0}
+.filtros button{background:none;border:0;cursor:pointer;font:500 .7rem var(--sans);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--tinta);padding:4px 14px;position:relative}
+.filtros button+button::before{content:"|";position:absolute;left:-2px;color:#9a9385;font-weight:400}
+.filtros button:hover{color:var(--acento)}
+.filtros button.activo{color:var(--acento);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.contador{margin-top:18px;font-family:var(--serif);font-style:italic;font-size:.9rem;color:#6d675c}
+
+/* ============ REJILLA ASIMÉTRICA (masonry con columnas) ============ */
+.indice{columns:3;column-gap:clamp(24px,4vw,56px);padding:34px 0 60px}
+.modelo{break-inside:avoid;margin-bottom:clamp(36px,5vw,64px);animation:entrada .6s ease both}
+@keyframes entrada{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.foto{position:relative;border:1px solid var(--tinta);padding:6px;background:var(--crema);overflow:hidden}
+.foto .marco{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--crema-2)}
+.modelo:nth-child(3n+2) .marco{aspect-ratio:4/5}
+.modelo:nth-child(3n+3) .marco{aspect-ratio:2/3}
+.modelo:nth-child(3n+2){margin-top:clamp(0px,3vw,40px)}
+.foto img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.15) contrast(1.03);transition:filter .5s,transform .8s}
+.inicial{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(7rem,16vw,12rem);color:var(--acento)}
+.num-fondo{position:absolute;inset:6px;display:flex;align-items:flex-end;justify-content:flex-start;padding:10px 14px;
+  font-family:var(--serif);font-weight:900;font-size:clamp(5rem,11vw,8rem);line-height:.8;color:var(--crema);
+  opacity:0;transition:opacity .4s;pointer-events:none;mix-blend-mode:normal}
+.modelo:hover .num-fondo{opacity:.9}
+.modelo:hover .foto img{filter:brightness(1.12) grayscale(.3);transform:scale(1.03)}
+.pie{padding-top:14px}
+.pie .cabeza{display:flex;align-items:baseline;gap:12px}
+.pagina{font-family:var(--serif);font-size:.95rem;color:var(--acento);font-weight:700}
+.pie h2{font-family:var(--serif);font-weight:700;font-size:clamp(1.7rem,3vw,2.3rem);line-height:1.05}
+.secciones{margin-top:6px;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--acento)}
+.caption{margin-top:10px;font-family:var(--serif);font-style:italic;font-size:.95rem;color:#3a372f;
+  border-left:1px solid var(--tinta);padding-left:12px}
+.enlaces{margin-top:14px;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+.enlaces a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.enlaces a:hover{color:var(--acento)}
+.enlaces .sep{margin:0 .7em;color:#9a9385}
+.vacio{grid-column:1/-1;text-align:center;padding:60px 0;font-family:var(--serif);font-style:italic;font-size:1.4rem;column-span:all}
+
+/* ============ CONTRAPORTADA ============ */
+footer{background:var(--tinta);color:var(--crema);text-align:center;padding:clamp(40px,7vw,80px) 20px 30px}
+footer .marca{font-family:var(--serif);font-weight:900;font-size:clamp(2rem,7vw,4.5rem);letter-spacing:.06em;text-transform:uppercase}
+footer .lema{font-family:var(--serif);font-style:italic;color:#cfc8b8;margin:8px 0 26px}
+footer .creditos{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:#a9a294;line-height:2}
+footer .creditos b{color:var(--crema);font-weight:600}
+footer hr{border:0;border-top:1px solid #444;max-width:320px;margin:24px auto}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:900px){.indice{columns:2}}
+@media(max-width:560px){
+  .indice{columns:1}
+  .modelo:nth-child(3n+2){margin-top:0}
+  .subtitulo{justify-content:center;text-align:center}
+  .num-fondo{opacity:.0}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="wrap">
+  <div class="topbar">
+    <span id="fecha"></span>
+    <span>Edición <b id="edicion"></b></span>
+    <span id="precio"></span>
+  </div>
+  <div class="masthead"><h1 id="titulo">Biblioteca</h1></div>
+  <hr class="rule"><hr class="rule thin">
+  <div class="subtitulo">
+    <span id="sub-izq"></span>
+    <em>Colección de Personajes</em>
+    <span id="sub-der"></span>
+  </div>
+  <hr class="rule thin">
+</header>
+
+<!-- ============ BUSCADOR + FILTROS ============ -->
+<main class="wrap">
+  <section class="archivo">
+    <label for="buscador">Búsqueda en el archivo</label>
+    <input id="buscador" type="search" placeholder="Nombre, descripción o sección…" autocomplete="off">
+    <nav class="filtros" id="filtros" aria-label="Filtrar por sección"></nav>
+    <p class="contador" id="contador"></p>
+  </section>
+
+  <!-- ============ ÍNDICE EDITORIAL ============ -->
+  <section class="indice" id="indice" aria-live="polite"></section>
+</main>
+
+<!-- ============ CONTRAPORTADA ============ -->
+<footer>
+  <div class="marca" id="marca-footer">Biblioteca</div>
+  <p class="lema">Cada personaje, una portada.</p>
+  <hr>
+  <p class="creditos">
+    Dirección editorial <b>Tu Nombre</b><br>
+    Fotografía &amp; arte <b>Sus respectivos creadores</b><br>
+    Diseño <b>Estudio Biblioteca</b>
+  </p>
+  <hr>
+  <p class="creditos">© <span id="anio"></span> — Todos los derechos reservados a sus autores</p>
+</footer>
+
+<script>
+/* =====================================================================
+   ⬇️ AQUÍ EDITAS TUS PERSONAJES ⬇️
+   Copia y pega un bloque { ... }, — deja "" en lo que no uses.
+   · imagen: URL o ruta (ej. "img/luna.jpg"). Vacío = se muestra la inicial.
+   · enlaces: los vacíos ("") no aparecen. "otro" puede ser cualquier URL.
+   ===================================================================== */
+
+// Ajustes de la revista (falsos, cámbialos a tu gusto)
+const REVISTA = {
+  titulo:  "Biblioteca",
+  edicion: "N.º 001",
+  fecha:   "Septiembre 2026",
+  precio:  "Edición de colección",
+  numeroSubtitulo: "Edición N.º 001",
+  creditosAnio: 2026
+};
+
+const PERSONAJES = [
+  {
+    nombre: "Isabella Marchetti",
+    imagen: "",
+    descripcion: "Heredera de una casa veneciana con un secreto guardado bajo tres llaves.",
+    etiquetas: ["Fantasía", "Romance"],
+    enlaces: { drive: "https://drive.google.com/", janitor: "https://janitorai.com/", caveduck: "", chub: "", poe: "", otro: "" }
+  },
+  {
+    nombre: "Kaito Arashi",
+    imagen: "",
+    descripcion: "Espadachín errante que colecciona atardeceres y deudas de honor.",
+    etiquetas: ["Aventura", "Drama"],
+    enlaces: { drive: "", janitor: "https://janitorai.com/", caveduck: "https://caveduck.io/", chub: "https://chub.ai/", poe: "", otro: "" }
+  },
+  {
+    nombre: "Lady Ophelia Crane",
+    imagen: "",
+    descripcion: "Detective victoriana, impecable en el vestir y despiadada en el interrogatorio.",
+    etiquetas: ["Misterio", "Época"],
+    enlaces: { drive: "https://drive.google.com/", janitor: "", caveduck: "", chub: "", poe: "https://poe.com/", otro: "https://ejemplo.com" }
+  },
+  {
+    nombre: "Zephyr",
+    imagen: "",
+    descripcion: "Androide de compañía que aprendió a soñar y ahora no quiere despertar.",
+    etiquetas: ["Ciencia ficción", "Drama"],
+    enlaces: { drive: "", janitor: "https://janitorai.com/", caveduck: "", chub: "", poe: "", otro: "" }
+  },
+  {
+    nombre: "Mireya Solano",
+    imagen: "",
+    descripcion: "Chef de un restaurante que solo abre las noches de luna llena.",
+    etiquetas: ["Fantasía", "Cotidiano"],
+    enlaces: { drive: "https://drive.google.com/", janitor: "", caveduck: "https://caveduck.io/", chub: "", poe: "", otro: "" }
+  }
+];
+
+/* =====================================================================
+   ⬆️ FIN DE LA ZONA EDITABLE — no hace falta tocar nada más abajo ⬆️
+   ===================================================================== */
+
+/* Nombres visibles de cada tipo de enlace */
+const NOMBRES_ENLACE = { drive:"Drive", janitor:"Janitor", caveduck:"CaveDuck", chub:"Chub", poe:"Poe", otro:"Otro" };
+
+/* Estado de la interfaz */
+let filtroActivo = "Todos";
+let textoBusqueda = "";
+
+/* Referencias al DOM */
+const $indice = document.getElementById("indice");
+const $filtros = document.getElementById("filtros");
+const $contador = document.getElementById("contador");
+
+/* Escapa HTML para evitar inyecciones desde los datos */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* Solo permite enlaces http(s) */
+const urlSegura = u => /^https?:\/\//i.test(String(u || "").trim());
+
+/* Quita tildes y pasa a minúsculas, para buscar sin importar acentos */
+const normalizar = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+/* Número de página con dos dígitos: 01., 02.… */
+const pagina = n => String(n).padStart(2, "0") + ".";
+
+/* Rellena el masthead y el footer con los ajustes de REVISTA */
+function pintarMasthead(){
+  document.title = REVISTA.titulo.toUpperCase() + " — Colección de Personajes";
+  document.getElementById("titulo").textContent = REVISTA.titulo;
+  document.getElementById("marca-footer").textContent = REVISTA.titulo;
+  document.getElementById("fecha").textContent = REVISTA.fecha;
+  document.getElementById("edicion").textContent = REVISTA.edicion;
+  document.getElementById("precio").textContent = REVISTA.precio;
+  document.getElementById("sub-izq").textContent = REVISTA.numeroSubtitulo;
+  document.getElementById("sub-der").textContent = PERSONAJES.length + " retratos";
+  document.getElementById("anio").textContent = REVISTA.creditosAnio;
+}
+
+/* Lista única de etiquetas (secciones) */
+function obtenerEtiquetas(){
+  const set = new Set();
+  PERSONAJES.forEach(p => (p.etiquetas || []).forEach(e => set.add(e)));
+  return ["Todos", ...[...set].sort((a, b) => a.localeCompare(b, "es"))];
+}
+
+/* Dibuja los filtros como palabras separadas por barras */
+function pintarFiltros(){
+  $filtros.innerHTML = obtenerEtiquetas().map(e =>
+    `<button type="button" data-tag="${esc(e)}" class="${e === filtroActivo ? "activo" : ""}">${esc(e)}</button>`
+  ).join("");
+}
+
+/* HTML de la foto: imagen o inicial editorial */
+function htmlFoto(p, i){
+  const num = `<span class="num-fondo" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>`;
+  const contenido = p.imagen
+    ? `<img src="${esc(p.imagen)}" alt="${esc(p.nombre)}" loading="lazy">`
+    : `<div class="inicial" aria-hidden="true">${esc((p.nombre || "?").trim().charAt(0).toUpperCase())}</div>`;
+  return `<div class="foto"><div class="marco">${contenido}</div>${num}</div>`;
+}
+
+/* HTML de los enlaces (omite los vacíos) */
+function htmlEnlaces(p){
+  const items = Object.entries(p.enlaces || {})
+    .filter(([, url]) => urlSegura(url))
+    .map(([k, url]) => `<a href="${esc(url.trim())}" target="_blank" rel="noopener noreferrer">${esc(NOMBRES_ENLACE[k] || k)}</a>`);
+  return items.length ? `<div class="enlaces">${items.join('<span class="sep">·</span>')}</div>` : "";
+}
+
+/* Dibuja las tarjetas según búsqueda y filtro */
+function pintarIndice(){
+  const q = normalizar(textoBusqueda.trim());
+  const visibles = PERSONAJES
+    .map((p, i) => ({ p, i })) // conserva el número de página original
+    .filter(({ p }) => {
+      const okTag = filtroActivo === "Todos" || (p.etiquetas || []).includes(filtroActivo);
+      const texto = normalizar([p.nombre, p.descripcion, ...(p.etiquetas || [])].join(" "));
+      return okTag && (!q || texto.includes(q));
+    });
+
+  $contador.textContent = visibles.length === 1 ? "1 retrato en portada" : visibles.length + " retratos en portada";
+
+  if (!visibles.length){
+    $indice.innerHTML = `<p class="vacio">Sin resultados en el archivo.</p>`;
+    return;
+  }
+
+  $indice.innerHTML = visibles.map(({ p, i }, pos) => `
+    <article class="modelo" style="animation-delay:${Math.min(pos * 70, 500)}ms">
+      ${htmlFoto(p, i)}
+      <div class="pie">
+        <div class="cabeza"><span class="pagina">${pagina(i + 1)}</span><h2>${esc(p.nombre)}</h2></div>
+        <div class="secciones">${(p.etiquetas || []).map(esc).join(" / ")}</div>
+        <p class="caption">${esc(p.descripcion)}</p>
+        ${htmlEnlaces(p)}
+      </div>
+    </article>`).join("");
+}
+
+/* Eventos */
+document.getElementById("buscador").addEventListener("input", e => { textoBusqueda = e.target.value; pintarIndice(); });
+$filtros.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  filtroActivo = b.dataset.tag; pintarFiltros(); pintarIndice();
+});
+
+/* Inicio */
+pintarMasthead(); pintarFiltros(); pintarIndice();
+</script>
+</body>
+</html>
